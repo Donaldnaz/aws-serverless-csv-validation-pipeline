@@ -1,0 +1,38 @@
+{
+  "Comment": "Placeholder Step Functions workflow for CSV validation pipeline",
+  "StartAt": "CleanCSV",
+  "States": {
+    "CleanCSV": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "csvfilecleaner"
+      },
+      "Next": "CheckValidation"
+    },
+    "CheckValidation": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$",
+          "StringEquals": "VALID",
+          "Next": "StoreValidRecord"
+        }
+      ],
+      "Default": "WriteInvalidRows"
+    },
+    "StoreValidRecord": {
+      "Type": "Pass",
+      "Result": "Valid record stored",
+      "End": true
+    },
+    "WriteInvalidRows": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "write-invalid-rows"
+      },
+      "End": true
+    }
+  }
+}

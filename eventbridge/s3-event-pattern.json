@@ -1,0 +1,19 @@
+{
+  "source": [
+    {
+      "eventSource": "aws.s3",
+      "eventName": "ObjectCreated:Put",
+      "arn": "arn:aws:s3:::example-bucket"
+    }
+  ],
+  "detail": {
+    "bucket": {
+      "name": ["example-bucket"]
+    },
+    "object": {
+      "key": [{
+        "prefix": "uploads/"
+      }]
+    }
+  }
+}

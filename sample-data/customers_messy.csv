@@ -1,0 +1,6 @@
+customer_id,first_name,last_name,email,phone,city,street_address,postal_code
+1,John,Doe,john.doe@example.com,555-0101,Seattle,123 Main St,98101
+2,Jane,Smith,jane.smith@example.com,555-0102,Portland,456 Oak Ave,97205
+3,Robert,Brown,robert.brown@example.com,555-0103,Denver,789 Pine Rd,80123
+4,Emily,Jones,emily.jones@example.com,555-0104,Austin,101 Cedar Ln,78701
+5,,Taylor,missing.email@example.com,555-0105,Miami,222 Palm Dr,33101
