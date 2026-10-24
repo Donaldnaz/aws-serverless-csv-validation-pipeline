@@ -1,0 +1,13 @@
+Input Path
+
+{
+  "bucket": "$.detail.bucket.name",
+  "key": "$.detail.object.key"
+}
+
+
+Input Template
+{
+  "bucket": <bucket>,
+  "key": <key>
+}
