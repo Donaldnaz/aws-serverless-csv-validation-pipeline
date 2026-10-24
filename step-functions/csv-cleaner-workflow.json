@@ -1,36 +1,168 @@
 {
-  "Comment": "Placeholder Step Functions workflow for CSV validation pipeline",
-  "StartAt": "CleanCSV",
+  "Comment": "Validate CSV rows, store valid records in DynamoDB, write invalid records to S3, and publish summary to SNS",
+  "StartAt": "Process CSV",
   "States": {
-    "CleanCSV": {
+    "Process CSV": {
+      "Type": "Map",
+      "MaxConcurrency": 10,
+      "ItemReader": {
+        "Resource": "arn:aws:states:::s3:getObject",
+        "ReaderConfig": {
+          "InputType": "CSV",
+          "CSVHeaderLocation": "FIRST_ROW"
+        },
+        "Parameters": {
+          "Bucket.$": "$.bucket",
+          "Key.$": "$.key"
+        }
+      },
+      "ItemSelector": {
+        "row.$": "$$.Map.Item.Value",
+        "row_index.$": "$$.Map.Item.Index"
+      },
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "DISTRIBUTED",
+          "ExecutionType": "STANDARD"
+        },
+        "StartAt": "Validate Row",
+        "States": {
+          "Validate Row": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": "arn:aws:lambda:us-east-2:159388599148:function:csvfilecleaner",
+              "Payload.$": "$"
+            },
+            "OutputPath": "$.Payload",
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "Lambda.ServiceException",
+                  "Lambda.AWSLambdaException",
+                  "Lambda.SdkClientException"
+                ],
+                "IntervalSeconds": 3,
+                "MaxAttempts": 3,
+                "BackoffRate": 2
+              }
+            ],
+            "Next": "Check Validity"
+          },
+          "Check Validity": {
+            "Type": "Choice",
+            "Choices": [
+              {
+                "Variable": "$.status",
+                "StringEquals": "VALID",
+                "Next": "Write To DynamoDB"
+              }
+            ],
+            "Default": "Return Invalid Row"
+          },
+          "Write To DynamoDB": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::dynamodb:putItem",
+            "Parameters": {
+              "TableName": "csvfiledatabase",
+              "Item": {
+                "customerId": {
+                  "S.$": "$.customer.customerId"
+                },
+                "fullName": {
+                  "S.$": "$.customer.fullName"
+                },
+                "email": {
+                  "S.$": "$.customer.email"
+                },
+                "age": {
+                  "N.$": "States.Format('{}', $.customer.age)"
+                },
+                "country": {
+                  "S.$": "$.customer.country"
+                }
+              }
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "DynamoDB.ProvisionedThroughputExceededException",
+                  "DynamoDB.RequestLimitExceeded"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 5,
+                "BackoffRate": 2
+              }
+            ],
+            "ResultPath": null,
+            "Next": "Return Valid Row"
+          },
+          "Return Valid Row": {
+            "Type": "Pass",
+            "Parameters": {
+              "status": "VALID",
+              "row_index.$": "$.row_index",
+              "customerId.$": "$.customer.customerId"
+            },
+            "End": true
+          },
+          "Return Invalid Row": {
+            "Type": "Pass",
+            "Parameters": {
+              "status": "INVALID",
+              "row_index.$": "$.row_index",
+              "customer.$": "$.customer",
+              "errors.$": "$.errors"
+            },
+            "End": true
+          }
+        }
+      },
+      "ResultWriter": {
+        "Resource": "arn:aws:states:::s3:putObject",
+        "Parameters": {
+          "Bucket": "csvfilebucketname",
+          "Prefix": "errors/map-results/"
+        }
+      },
+      "ResultPath": "$.map_summary",
+      "Next": "Write Invalid Rows To S3"
+    },
+    "Write Invalid Rows To S3": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
       "Parameters": {
-        "FunctionName": "csvfilecleaner"
+        "FunctionName": "arn:aws:lambda:us-east-2:159388599148:function:WriteInvalidRows",
+        "Payload": {
+          "source_bucket.$": "$.bucket",
+          "source_key.$": "$.key",
+          "target_bucket": "csvfilebucketname",
+          "target_prefix": "errors/",
+          "map_result.$": "$.map_summary"
+        }
       },
-      "Next": "CheckValidation"
-    },
-    "CheckValidation": {
-      "Type": "Choice",
-      "Choices": [
+      "OutputPath": "$.Payload",
+      "Retry": [
         {
-          "Variable": "$",
-          "StringEquals": "VALID",
-          "Next": "StoreValidRecord"
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
         }
       ],
-      "Default": "WriteInvalidRows"
+      "Next": "Publish Summary To SNS"
     },
-    "StoreValidRecord": {
-      "Type": "Pass",
-      "Result": "Valid record stored",
-      "End": true
-    },
-    "WriteInvalidRows": {
+    "Publish Summary To SNS": {
       "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
+      "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "FunctionName": "write-invalid-rows"
+        "TopicArn": "arn:aws:sns:us-east-2:159388599148:CSVFileSummaryV2",
+        "Subject": "CSV Validation Summary",
+        "Message.$": "States.Format('File: {}. Clean rows: {}. Invalid rows: {}. Error file: {}. Summary: {}', $.source_key, $.clean_rows, $.dirty_rows, $.error_key, $.summary_details)"
       },
       "End": true
     }
