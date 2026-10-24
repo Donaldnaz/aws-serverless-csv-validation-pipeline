@@ -9,8 +9,8 @@
         "s3:ListBucket"
       ],
       "Resource": [
-        "arn:aws:s3:::csv-input-bucket",
-        "arn:aws:s3:::csv-input-bucket/*"
+        "arn:aws:s3:::REPLACE_WITH_CSV_INPUT_BUCKET",
+        "arn:aws:s3:::REPLACE_WITH_CSV_INPUT_BUCKET/*"
       ]
     },
     {
@@ -20,7 +20,7 @@
         "s3:PutObject",
         "s3:DeleteObject"
       ],
-      "Resource": "arn:aws:s3:::csv-invalid-bucket/*"
+      "Resource": "arn:aws:s3:::REPLACE_WITH_INVALID_CSV_BUCKET/*"
     }
   ]
 }

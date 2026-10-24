@@ -7,7 +7,7 @@
       "Action": [
         "sns:Publish"
       ],
-      "Resource": "arn:aws:sns:us-east-1:123456789012:csv-validation-alerts"
+      "Resource": "arn:aws:sns:REPLACE_WITH_AWS_REGION:REPLACE_WITH_AWS_ACCOUNT_ID:REPLACE_WITH_VALIDATION_TOPIC"
     }
   ]
 }

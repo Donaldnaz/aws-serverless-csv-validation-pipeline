@@ -10,7 +10,7 @@
         "dynamodb:BatchWriteItem",
         "dynamodb:DeleteItem"
       ],
-      "Resource": "arn:aws:dynamodb:us-east-1:123456789012:table/csv-valid-records"
+      "Resource": "arn:aws:dynamodb:REPLACE_WITH_AWS_REGION:REPLACE_WITH_AWS_ACCOUNT_ID:table/REPLACE_WITH_VALID_RECORDS_TABLE"
     }
   ]
 }

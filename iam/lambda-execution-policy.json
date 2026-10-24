@@ -9,46 +9,46 @@
         "logs:CreateLogStream",
         "logs:PutLogEvents"
       ],
-      "Resource": "arn:aws:logs:*:*:*"
+      "Resource": "arn:aws:logs:REPLACE_WITH_AWS_REGION:REPLACE_WITH_AWS_ACCOUNT_ID:log-group:/aws/lambda/REPLACE_WITH_CSV_CLEANER_FUNCTION:*"
     },
     {
-      "Sid": "ReadCsvInputFromSourceBucket",
+      "Sid": "AllowReadFromInputBucket",
       "Effect": "Allow",
       "Action": [
         "s3:GetObject",
         "s3:ListBucket"
       ],
       "Resource": [
-        "arn:aws:s3:::csv-input-bucket",
-        "arn:aws:s3:::csv-input-bucket/*"
+        "arn:aws:s3:::REPLACE_WITH_CSV_INPUT_BUCKET",
+        "arn:aws:s3:::REPLACE_WITH_CSV_INPUT_BUCKET/*"
       ]
     },
     {
-      "Sid": "WriteRejectedRowsToInvalidBucket",
+      "Sid": "AllowWriteToInvalidBucket",
       "Effect": "Allow",
       "Action": [
         "s3:PutObject",
         "s3:PutObjectAcl"
       ],
-      "Resource": "arn:aws:s3:::csv-invalid-bucket/*"
+      "Resource": "arn:aws:s3:::REPLACE_WITH_INVALID_CSV_BUCKET/*"
     },
     {
-      "Sid": "WriteAcceptedRowsToDynamoDB",
+      "Sid": "AllowWriteToValidatedRecordsTable",
       "Effect": "Allow",
       "Action": [
         "dynamodb:PutItem",
         "dynamodb:UpdateItem",
         "dynamodb:BatchWriteItem"
       ],
-      "Resource": "arn:aws:dynamodb:us-east-1:123456789012:table/csv-valid-records"
+      "Resource": "arn:aws:dynamodb:REPLACE_WITH_AWS_REGION:REPLACE_WITH_AWS_ACCOUNT_ID:table/REPLACE_WITH_VALID_RECORDS_TABLE"
     },
     {
-      "Sid": "PublishValidationNotifications",
+      "Sid": "AllowPublishValidationNotifications",
       "Effect": "Allow",
       "Action": [
         "sns:Publish"
       ],
-      "Resource": "arn:aws:sns:us-east-1:123456789012:csv-validation-alerts"
+      "Resource": "arn:aws:sns:REPLACE_WITH_AWS_REGION:REPLACE_WITH_AWS_ACCOUNT_ID:REPLACE_WITH_VALIDATION_TOPIC"
     }
   ]
 }
