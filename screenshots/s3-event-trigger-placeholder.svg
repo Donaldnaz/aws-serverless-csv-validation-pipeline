@@ -1,0 +1,24 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#F8FAFC"/>
+  <text x="640" y="72" text-anchor="middle" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">CSV Upload Trigger Flow</text>
+
+  <rect x="80" y="210" width="260" height="180" rx="18" fill="#DBEAFE"/>
+  <text x="210" y="280" text-anchor="middle" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">S3 Bucket</text>
+  <text x="210" y="315" text-anchor="middle" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="22">customers.csv</text>
+
+  <rect x="460" y="210" width="300" height="180" rx="18" fill="#E0E7FF"/>
+  <text x="610" y="280" text-anchor="middle" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">EventBridge</text>
+  <text x="610" y="315" text-anchor="middle" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="22">ObjectCreated</text>
+
+  <rect x="840" y="210" width="300" height="180" rx="18" fill="#DCFCE7"/>
+  <text x="990" y="280" text-anchor="middle" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Lambda</text>
+  <text x="990" y="315" text-anchor="middle" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="22">csvfilecleaner</text>
+
+  <line x1="340" y1="300" x2="460" y2="300" stroke="#374151" stroke-width="6"/>
+  <polygon points="460,300 440,287 440,313" fill="#374151"/>
+
+  <line x1="760" y1="300" x2="840" y2="300" stroke="#374151" stroke-width="6"/>
+  <polygon points="840,300 820,287 820,313" fill="#374151"/>
+
+  <text x="640" y="520" text-anchor="middle" fill="#374151" font-family="Arial, Helvetica, sans-serif" font-size="24">Placeholder: S3 Upload → EventBridge → Lambda Trigger</text>
+</svg>
