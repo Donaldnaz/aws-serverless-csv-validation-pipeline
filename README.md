@@ -1,35 +1,47 @@
-# AWS Serverless CSV Validation Pipeline
+# AWS CSV Validation Pipeline
 
-This repository contains a sample serverless architecture for ingesting, validating, cleaning, and processing CSV files in AWS. The solution is designed to automatically process uploaded CSV data, normalize it, and decide whether records should be accepted or rejected.
+At a growing technology company, data arrives from many places in many different formats. Vendor exports, customer uploads, partner submissions, and internal spreadsheets often come in as messy CSV files with missing values, inconsistent casing, malformed phone numbers, and invalid email addresses. When that data is processed without validation, it creates downstream errors, delays operations, and causes avoidable reporting problems.
 
-The project is structured as a starter/reference implementation and includes placeholder infrastructure definitions, workflow configuration, sample data, and Lambda function scaffolding to help you understand the overall serverless design and extend it into a production-ready pipeline.
+This project was created to solve that problem with a simple, scalable, and cost-effective serverless architecture in AWS. The pipeline automatically receives uploaded CSV files, validates and cleans the content, routes records through a decision flow, and stores the good data while flagging bad records for follow-up.
+
+The goal is to provide a practical reference implementation for teams that want a clean event-driven pipeline without building a large, complex system from scratch.
 
 ## Architecture Overview
-<img width="888" height="1056" alt="stepfunctions_graph" src="https://github.com/user-attachments/assets/84448b47-f2ee-46d2-a7a1-4a4c271bf26a" />
 
-## Infrastructure Overview
+<img width="543" height="972" alt="stepfunctions_graph" src="https://github.com/user-attachments/assets/fd5e58a0-1372-459e-97c5-93738f1ad471" />
 
-The pipeline is built around a lightweight event-driven architecture:
+## The business problem
 
-- Amazon S3 stores the incoming CSV files.
-- Amazon EventBridge watches the S3 bucket for new object uploads.
-- A Lambda function processes the uploaded file and validates/cleans the data.
-- AWS Step Functions orchestrates the validation decision path.
-- Valid rows are sent to a downstream datastore such as DynamoDB.
-- Invalid rows are routed to a second Lambda for handling, reporting, or alerting.
-- Amazon SNS can be used to send summary notifications for rejected or processed records.
+Data quality issues are common in real-world business operations:
+- missing fields
+- inconsistent formatting
+- incorrect or malformed values
+- data arriving from multiple sources with different conventions
 
-## Architecture Flow
+Without a validation layer, companies risk:
+- broken reporting
+- failed downstream processing
+- poor customer experiences
+- operational delays
+- costly manual cleanup
 
-1. A user uploads a CSV file to an S3 bucket.
-2. EventBridge detects the S3 ObjectCreated event.
-3. The `csvfilecleaner` Lambda is triggered.
-4. The Lambda reads the file, validates rows, removes obvious formatting issues, and inspects data quality.
-5. The Step Functions workflow decides whether the record is valid or invalid.
-6. Valid records continue to storage.
-7. Invalid records are processed by the `write-invalid-rows` Lambda and can be stored or reported.
+The AWS CSV Validation Pipeline is designed to address those issues early, before bad records reach the rest of the system.
 
-## AWS Services Used
+## The solution
+
+The pipeline is built around a lightweight event-driven design:
+
+1. A CSV file is uploaded to Amazon S3.
+2. EventBridge detects the S3 object-created event.
+3. A Lambda function reads the file and validates or cleans the content.
+4. AWS Step Functions decides whether each record should pass or fail.
+5. Valid records move to a downstream datastore such as DynamoDB.
+6. Invalid records are routed to a second Lambda for reporting or handling.
+7. Amazon SNS can be used to send summary notifications or alerts.
+
+This creates a clean and maintainable pattern for processing incoming data reliably and automatically.
+
+## AWS services used
 
 | Service | Purpose | Location |
 | --- | --- | --- |
@@ -37,11 +49,11 @@ The pipeline is built around a lightweight event-driven architecture:
 | EventBridge | Event-driven trigger on file upload | `eventbridge/` |
 | Lambda | CSV validation and invalid-row processing | `lambda/` |
 | Step Functions | Workflow orchestration and routing | `step-functions/csv-cleaner-workflow.json` |
-| DynamoDB | Storage for validated records | Planned infrastructure component |
+| DynamoDB | Storage for valid records | Planned infrastructure component |
 | SNS | Notifications and summary alerts | Planned infrastructure component |
 | IAM | Permissions for Lambdas, S3, Step Functions, and downstream services | `iam/README.md` |
 
-## Repository Structure
+## Repository structure
 
 ```text
 aws-serverless-csv-validation-pipeline/
@@ -76,7 +88,7 @@ aws-serverless-csv-validation-pipeline/
     └── sns-summary.png
 ```
 
-## File Descriptions
+## File descriptions
 
 ### `step-functions/csv-cleaner-workflow.json`
 Defines the orchestration flow for the CSV processing pipeline. The workflow starts with the CSV cleaner Lambda, then branches based on whether the output is valid or invalid.
@@ -96,9 +108,6 @@ Contains a sample EventBridge input transformer configuration used to normalize 
 ### `iam/README.md`
 Documents the IAM permissions expected for Lambda execution, S3 access, Step Functions, and downstream services.
 
-### `iam/*.json`
-Example AWS IAM policy documents describing least-privilege access for the Lambda functions, S3 buckets, DynamoDB table, SNS topic, and Step Functions execution role.
-
 ### `sample-data/customers_messy.csv`
 Source data with formatting issues used to demonstrate validation and cleanup logic.
 
@@ -111,48 +120,41 @@ A mixed-quality dataset containing a blend of valid and invalid records to test 
 ### `screenshots/s3-event-trigger-placeholder.svg`
 A visual placeholder showing the S3 upload, EventBridge object-created trigger, and Lambda invocation path.
 
-## Example Data Flow
+## Why this matters
 
-A sample file such as `customers_messy.csv` may contain formatting issues like:
+This project reflects a practical approach to handling messy data in a real-world environment. Instead of relying on manual cleanup, teams can automate the validation process and reduce the risk of poor-quality data entering operational systems.
 
-- missing values
-- inconsistent casing
-- malformed phone numbers
-- blank email fields
-- invalid postal codes
+The design is intentionally simple and understandable. It gives organizations a solid base for building a reliable data-processing workflow without needing a full enterprise-grade platform from day one.
 
-The validation pipeline can clean or reject these records according to business rules defined in the Lambda logic and Step Functions workflow.
+## Sample data
 
-## Deployment Notes
+The repository includes sample CSV files with different quality levels:
+- `customers_messy.csv` — messy data with common format errors
+- `customers_clean.csv` — cleaned version for comparison
+- `customers_mixed.csv` — a mixed dataset to simulate real-world quality variation
+
+These files make it easy to test the validation pipeline and demonstrate how the architecture behaves under realistic conditions.
+
+## Deployment notes
 
 This repository is intended as a starter template for a serverless AWS implementation. To move it into production, you should add:
-
 - an S3 bucket with appropriate event notifications
 - IAM execution roles and policies
 - DynamoDB tables for valid records
 - SNS topics for invalid-row notifications or summaries
-- actual deployment automation using AWS SAM, CloudFormation, or Terraform
+- deployment automation with AWS SAM, CloudFormation, or Terraform
 
-## Security Considerations
+## Security considerations
 
 When deploying this architecture in AWS, ensure the following:
-
 - least-privilege IAM policies are used
 - S3 buckets restrict public access
 - secrets and credentials are not hardcoded
 - CloudWatch logs are monitored for pipeline failures
 - data validation rules are enforced before records are stored
 
-## Suggested Next Steps
-
-1. Replace the placeholder Lambda logic with real CSV parsing and validation rules.
-2. Define the exact data model for valid and invalid records.
-3. Add DynamoDB or S3 destinations for accepted records.
-4. Add SNS or email notifications for failed validations.
-5. Automate deployment with Infrastructure as Code.
-
 ## Summary
 
-This repository is a practical example of a serverless CSV validation pipeline in AWS. It demonstrates a clean event-driven architecture where S3, EventBridge, Lambda, and Step Functions work together to process uploaded CSV data efficiently and predictably.
+The AWS CSV Validation Pipeline provides a simple, scalable, and practical way to handle messy CSV data in the cloud. It is built to help teams automate validation, reduce manual effort, and improve the quality of the data flowing into their systems.
 
 This project is designed to be expanded into a production-grade solution with real infrastructure, validator logic, and observability.
