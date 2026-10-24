@@ -1,8 +1,8 @@
 # AWS Serverless CSV Validation Pipeline
 
-This repository contains a sample serverless architecture for ingesting, validating, cleaning, and processing CSV files in AWS. The solution is designed to automatically process uploaded CSV data, flag invalid rows, and route valid records into downstream storage while keeping the workflow easy to extend.
+This repository contains a sample serverless architecture for ingesting, validating, cleaning, and processing CSV files in AWS. The solution is designed to automatically process uploaded CSV data, normalize it, and decide whether records should be accepted or rejected.
 
-The project is structured as a starter/reference implementation and includes placeholder infrastructure definitions, workflow configuration, sample data, and Lambda function scaffolding to help you quickly stand up the pipeline in AWS.
+The project is structured as a starter/reference implementation and includes placeholder infrastructure definitions, workflow configuration, sample data, and Lambda function scaffolding to help you understand the overall serverless design and extend it into a production-ready pipeline.
 
 ## Architecture Overview
 <img width="888" height="1056" alt="Screenshot 2026-10-24 000648" src="https://github.com/user-attachments/assets/84448b47-f2ee-46d2-a7a1-4a4c271bf26a" />
@@ -58,11 +58,17 @@ aws-serverless-csv-validation-pipeline/
 ├── eventbridge/
 │   └── s3-event-pattern.json
 ├── iam/
-│   └── README.md
+│   ├── README.md
+│   ├── lambda-execution-policy.json
+│   ├── s3-access-policy.json
+│   ├── dynamodb-access-policy.json
+│   ├── sns-publish-policy.json
+│   └── step-functions-execution-role.json
 ├── sample-data/
 │   └── customers_messy.csv
 └── screenshots/
-    ├── step-functions-execution.png
+    ├── s3-event-trigger-placeholder.svg
+    ├── step-functions-executions.png
     ├── dynamodb-valid-records.png
     └── sns-summary.png
 ```
@@ -84,8 +90,14 @@ Contains an EventBridge rule pattern for S3 object creation events. This is the 
 ### `iam/README.md`
 Documents the IAM permissions expected for Lambda execution, S3 access, Step Functions, and downstream services.
 
+### `iam/*.json`
+Example AWS IAM policy documents describing least-privilege access for the Lambda functions, S3 buckets, DynamoDB table, SNS topic, and Step Functions execution role.
+
 ### `sample-data/customers_messy.csv`
 Sample input data used to test validation logic and demonstrate how messy CSV content is cleaned and processed.
+
+### `screenshots/s3-event-trigger-placeholder.svg`
+A visual placeholder showing the S3 upload, EventBridge object-created trigger, and Lambda invocation path.
 
 ## Example Data Flow
 
@@ -129,6 +141,6 @@ When deploying this architecture in AWS, ensure the following:
 
 ## Summary
 
-This repository is a practical example of a serverless CSV validation pipeline in AWS. It demonstrates a clean event-driven architecture where S3, EventBridge, Lambda, and Step Functions work together to process uploaded CSV files efficiently and reliably.
+This repository is a practical example of a serverless CSV validation pipeline in AWS. It demonstrates a clean event-driven architecture where S3, EventBridge, Lambda, and Step Functions work together to process uploaded CSV data efficiently and predictably.
 
 This project is designed to be expanded into a production-grade solution with real infrastructure, validator logic, and observability.
