@@ -5,7 +5,7 @@ This repository contains a sample serverless architecture for ingesting, validat
 The project is structured as a starter/reference implementation and includes placeholder infrastructure definitions, workflow configuration, sample data, and Lambda function scaffolding to help you understand the overall serverless design and extend it into a production-ready pipeline.
 
 ## Architecture Overview
-<img width="888" height="1056" alt="Screenshot 2026-10-24 000648" src="https://github.com/user-attachments/assets/84448b47-f2ee-46d2-a7a1-4a4c271bf26a" />
+<img width="888" height="1056" alt="stepfunctions_graph" src="https://github.com/user-attachments/assets/84448b47-f2ee-46d2-a7a1-4a4c271bf26a" />
 
 ## Infrastructure Overview
 
@@ -34,7 +34,7 @@ The pipeline is built around a lightweight event-driven architecture:
 | Service | Purpose | Location |
 | --- | --- | --- |
 | S3 | Input file storage for uploaded CSVs | `sample-data/` and deployment bucket |
-| EventBridge | Event-driven trigger on file upload | `eventbridge/s3-event-pattern.json` |
+| EventBridge | Event-driven trigger on file upload | `eventbridge/` |
 | Lambda | CSV validation and invalid-row processing | `lambda/` |
 | Step Functions | Workflow orchestration and routing | `step-functions/csv-cleaner-workflow.json` |
 | DynamoDB | Storage for validated records | Planned infrastructure component |
@@ -56,7 +56,8 @@ aws-serverless-csv-validation-pipeline/
 │   └── write-invalid-rows/
 │       └── lambda_function.py
 ├── eventbridge/
-│   └── s3-event-pattern.json
+│   ├── s3-event-pattern.json
+│   └── input-transformer.json
 ├── iam/
 │   ├── README.md
 │   ├── lambda-execution-policy.json
@@ -65,7 +66,9 @@ aws-serverless-csv-validation-pipeline/
 │   ├── sns-publish-policy.json
 │   └── step-functions-execution-role.json
 ├── sample-data/
-│   └── customers_messy.csv
+│   ├── customers_messy.csv
+│   ├── customers_clean.csv
+│   └── customers_mixed.csv
 └── screenshots/
     ├── s3-event-trigger-placeholder.svg
     ├── step-functions-executions.png
@@ -85,7 +88,10 @@ This Lambda is the main processing entry point. It is intended to read uploaded 
 Handles rows rejected by validation. This function can be extended to write invalid records to a separate S3 bucket, update a reporting table, or publish an alert.
 
 ### `eventbridge/s3-event-pattern.json`
-Contains an EventBridge rule pattern for S3 object creation events. This is the trigger used to start the serverless workflow whenever a CSV is uploaded.
+Contains the EventBridge rule pattern for S3 object creation events. This is the trigger used to start the serverless workflow whenever a CSV is uploaded.
+
+### `eventbridge/input-transformer.json`
+Contains a sample EventBridge input transformer configuration used to normalize or rewrite the incoming S3 event payload before it reaches downstream processing.
 
 ### `iam/README.md`
 Documents the IAM permissions expected for Lambda execution, S3 access, Step Functions, and downstream services.
@@ -94,7 +100,13 @@ Documents the IAM permissions expected for Lambda execution, S3 access, Step Fun
 Example AWS IAM policy documents describing least-privilege access for the Lambda functions, S3 buckets, DynamoDB table, SNS topic, and Step Functions execution role.
 
 ### `sample-data/customers_messy.csv`
-Sample input data used to test validation logic and demonstrate how messy CSV content is cleaned and processed.
+Source data with formatting issues used to demonstrate validation and cleanup logic.
+
+### `sample-data/customers_clean.csv`
+A cleaned version of the sample data for validation comparisons and success-path testing.
+
+### `sample-data/customers_mixed.csv`
+A mixed-quality dataset containing a blend of valid and invalid records to test branching behavior in the pipeline.
 
 ### `screenshots/s3-event-trigger-placeholder.svg`
 A visual placeholder showing the S3 upload, EventBridge object-created trigger, and Lambda invocation path.
