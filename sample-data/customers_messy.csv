@@ -1,6 +1,16 @@
-customer_id,first_name,last_name,email,phone,city,street_address,postal_code
-1,John,Doe,john.doe@example.com,555-0101,Seattle,123 Main St,98101
-2,Jane,Smith,jane.smith@example.com,555-0102,Portland,456 Oak Ave,97205
-3,Robert,Brown,robert.brown@example.com,555-0103,Denver,789 Pine Rd,80123
-4,Emily,Jones,emily.jones@example.com,555-0104,Austin,101 Cedar Ln,78701
-5,,Taylor,missing.email@example.com,555-0105,Miami,222 Palm Dr,33101
+customerId,fullName,email,age,country
+M001,Tunde Bakare,tunde.bakare@example.com,30,NG
+M002,Zainab Yusuf,zainab.yusuf@,25,NG
+M003,Mark Spencer,mark.spencer@example.com,17,US
+M004,Linda Okoro,linda.okoro@example.com,101,NG
+M005,,,,
+M006,Kofi Annan,kofi.annan@example.com,48,GH
+,Nadia Hassan,nadia.hassan@example.com,32,ZA
+M008,Peter Pan,peter.pan@example,29,US
+M009,Ruth Njeri,ruth.njeri@example.com,3.5,KE
+M010,Sam Doe,sam.doe@@example.com,40,US
+M011,Joy Adeyemi,joy.adeyemi@example.com,35,ng
+M012,Victor Osei,victor.osei@example.com,18,GH
+M013,Mia Johnson,mia.johnson@example.com,100,CA
+M014,Obinna Nwosu,obinna.nwosu.example.com,42,NG
+M015,Lucy Grant,lucy.grant@example.com,abc,US

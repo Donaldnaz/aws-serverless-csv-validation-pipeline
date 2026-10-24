@@ -1,0 +1,11 @@
+customerId,fullName,email,age,country
+C001,Ada Obi,ada.obi@example.com,29,NG
+C002,Kwame Mensah,kwame.mensah@example.com,34,GH
+C003,Wanjiru Kamau,wanjiru.kamau@example.com,41,KE
+C004,Thabo Nkosi,thabo.nkosi@example.com,27,ZA
+C005,Emily Carter,emily.carter@example.com,52,US
+C006,Oliver Brown,oliver.brown@example.co.uk,38,GB
+C007,Sophie Tremblay,sophie.tremblay@example.ca,31,CA
+C008,Chidi Okeke,chidi.okeke@example.com,45,NG
+C009,Ama Boateng,ama.boateng@example.com,23,GH
+C010,Peter Otieno,peter.otieno@example.com,60,KE

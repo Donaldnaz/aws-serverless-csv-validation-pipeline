@@ -1,0 +1,13 @@
+customerId,fullName,email,age,country
+C101,Ngozi Eze,ngozi.eze@example.com,36,NG
+C102,Samuel Addo,samuel.addo@example.com,28,GH
+C103,Lerato Dlamini,lerato.dlamini@example.com,33,ZA
+C104,Ben Ade,ben.ade-at-example.com,34,NG
+C105,Cara Eze,cara.eze@example.com,-5,NG
+C106,James Wright,james.wright@example.com,47,US
+C107,,fatima.bello@example.com,30,NG
+C108,Aisha Musa,aisha.musa@example.com,twenty,NG
+C109,Daniel Kiprop,daniel.kiprop@example.com,39,KE
+C110,Grace Mwangi,grace.mwangi@example.com,26,KE
+C111,Hannah Smith,hannah.smith@example.com,44,FR
+C112,Yaw Asante,yaw.asante@example.com,55,GH
