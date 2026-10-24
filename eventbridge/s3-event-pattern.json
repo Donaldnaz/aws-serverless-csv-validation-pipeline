@@ -1,18 +1,13 @@
 {
-  "source": [
-    {
-      "eventSource": "aws.s3",
-      "eventName": "ObjectCreated:Put",
-      "arn": "arn:aws:s3:::example-bucket"
-    }
-  ],
+  "source": ["aws.s3"],
+  "detail-type": ["Object Created"],
   "detail": {
     "bucket": {
-      "name": ["example-bucket"]
+      "name": ["csvfilebucketname"]
     },
     "object": {
       "key": [{
-        "prefix": "uploads/"
+        "wildcard": "incoming/*.csv"
       }]
     }
   }
