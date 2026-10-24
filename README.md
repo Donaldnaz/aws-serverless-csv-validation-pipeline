@@ -4,6 +4,9 @@ This repository contains a sample serverless architecture for ingesting, validat
 
 The project is structured as a starter/reference implementation and includes placeholder infrastructure definitions, workflow configuration, sample data, and Lambda function scaffolding to help you quickly stand up the pipeline in AWS.
 
+## Architecture Overview
+<img width="543" height="972" alt="stepfunctions_graph" src="https://github.com/user-attachments/assets/fd5e58a0-1372-459e-97c5-93738f1ad471" />
+
 ## Infrastructure Overview
 
 The pipeline is built around a lightweight event-driven architecture:
