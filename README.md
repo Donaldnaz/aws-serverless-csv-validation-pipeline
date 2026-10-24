@@ -7,8 +7,6 @@ This project was created to solve that problem with a simple, scalable, and cost
 The goal is to provide a practical reference implementation for teams that want a clean event-driven pipeline without building a large, complex system from scratch.
 
 ## Architecture Overview
-
-<img width="543" height="972" alt="stepfunctions_graph" src="https://github.com/user-attachments/assets/fd5e58a0-1372-459e-97c5-93738f1ad471" />
 <img width="555" height="992" alt="Screenshot 2026-10-24 000648" src="https://github.com/user-attachments/assets/3fc6430b-9d86-494c-9a84-53b9fc61180d" />
 
 ## The business problem
